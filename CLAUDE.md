@@ -1,8 +1,8 @@
 # CLAUDE.md
 
-This file is the entry point for all project standards. It contains no rules itself — it tells you which doc to read and when. All rules live in `.claude/`.
+This file is the entry point for all project standards. It contains no rules itself — it tells you which doc to read and when. All rules live in `docs/`.
 
-Before writing any code, read the two mandatory docs in `.claude/always/`. Then fetch only the docs relevant to your task. Do not read docs that do not apply — context is finite.
+Before writing any code, read the two mandatory docs in `docs/always/`. Then fetch only the docs relevant to your task. Do not read docs that do not apply — context is finite.
 
 ---
 
@@ -10,8 +10,8 @@ Before writing any code, read the two mandatory docs in `.claude/always/`. Then 
 
 | Doc | What it covers |
 |---|---|
-| `.claude/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager |
-| `.claude/always/agent-behaviour.md` | Scope discipline, when to stop, output hygiene, how to document assumptions |
+| `docs/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager |
+| `docs/always/agent-behaviour.md` | Scope discipline, when to stop, output hygiene, how to document assumptions |
 
 ---
 
@@ -19,14 +19,14 @@ Before writing any code, read the two mandatory docs in `.claude/always/`. Then 
 
 | If your task involves… | Read |
 |---|---|
-| Creating or modifying a feature; deciding where a file belongs; adding a service, query, or store | `.claude/when/architecture.md` |
-| Building or modifying a component; making component structure decisions | `.claude/when/component-design.md` |
-| TypeScript types, Valibot schemas, forms, API data, error handling | `.claude/when/data-and-validation.md` |
-| Creating or modifying a route; nested routes; loaders; search params | `.claude/when/routing.md` |
-| Env variables, Biome config, testing | `.claude/when/tooling.md` |
-| Component logic, state decisions, animations, any time `useEffect` feels like the answer | `.claude/when/patterns.md` |
-| Building UI, interactive elements, loading/empty/error states, modals, dialogs, tooltips | `.claude/when/ui-library.md` |
-| Writing functions, hooks, or components; API types; reviewing code structure | `.claude/when/code-quality.md` |
+| Creating or modifying a feature; deciding where a file belongs; adding a service, query, or store | `docs/when/architecture.md` |
+| Building or modifying a component; making component structure decisions | `docs/when/component-design.md` |
+| TypeScript types, Valibot schemas, forms, API data, error handling | `docs/when/data-and-validation.md` |
+| Creating or modifying a route; nested routes; loaders; search params | `docs/when/routing.md` |
+| Env variables, Biome config, testing | `docs/when/tooling.md` |
+| Component logic, state decisions, animations, any time `useEffect` feels like the answer | `docs/when/patterns.md` |
+| Building UI, interactive elements, loading/empty/error states, modals, dialogs, tooltips | `docs/when/ui-library.md` |
+| Writing functions, hooks, or components; API types; reviewing code structure | `docs/when/code-quality.md` |
 
 ---
 
@@ -34,7 +34,7 @@ Before writing any code, read the two mandatory docs in `.claude/always/`. Then 
 
 | Doc | What it covers |
 |---|---|
-| `.claude/never/no-go-list.md` | Explicit prohibitions by domain — things an agent rationalises its way into |
+| `docs/never/no-go-list.md` | Explicit prohibitions by domain — things an agent rationalises its way into |
 
 ---
 
@@ -42,16 +42,16 @@ Before writing any code, read the two mandatory docs in `.claude/always/`. Then 
 
 | Doc | What it covers |
 |---|---|
-| `.claude/setup/git-hooks.md` | pnpm setup, Husky, lint-staged, commitlint — full walkthrough |
-| `.claude/setup/github-and-ci.md` | Branching strategy, PR template, CI workflow, repository settings |
-| `.claude/setup/project-template.md` | Template and rules for a project-level CLAUDE.md |
+| `docs/setup/git-hooks.md` | pnpm setup, Husky, lint-staged, commitlint — full walkthrough |
+| `docs/setup/github-and-ci.md` | Branching strategy, PR template, CI workflow, repository settings |
+| `docs/setup/project-template.md` | Template and rules for a project-level CLAUDE.md |
 
 ---
 
 ## Doc map
 
 ```
-.claude/
+docs/
   always/
     preamble.md
     agent-behaviour.md
@@ -78,7 +78,7 @@ Before writing any code, read the two mandatory docs in `.claude/always/`. Then 
 
 Each project has its own `CLAUDE.md` at its repo root. That file references this notebook for base rules and defines only what diverges or extends them. Project rules take precedence over this notebook where they conflict.
 
-See `.claude/setup/project-template.md` for the format.
+See `docs/setup/project-template.md` for the format.
 
 ---
 
