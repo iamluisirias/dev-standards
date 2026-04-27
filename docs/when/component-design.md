@@ -20,7 +20,7 @@ import { BaseStep, BaseStepTitle } from "@/features/steps/components/base-step.c
 
 ## Props
 
-- Define props as a `type` — never `interface` (reserved for component props only when using `interface`, but `type` is preferred for consistency across the codebase).
+- Define props as a `type`. Never use `interface` — `type` is the universal standard for everything in this codebase, including props.
 - Name the type `[ComponentName]Props`.
 - Never use `React.FC`. Declare props directly in the function signature.
 

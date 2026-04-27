@@ -10,7 +10,7 @@ Before writing any code, read the two mandatory docs in `docs/always/`. Then fet
 
 | Doc | What it covers |
 |---|---|
-| `docs/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager |
+| `docs/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager, task routing |
 | `docs/always/agent-behaviour.md` | Scope discipline, when to stop, output hygiene, how to document assumptions |
 
 ---

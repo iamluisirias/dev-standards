@@ -10,8 +10,7 @@
 |---|---|
 | `any` | Forbidden as a variable, prop, or return type. Only permitted as a bound in a generic: `<T extends Record<string, any>>`. Escalate to a human if needed elsewhere. |
 | `as` casting | Forbidden except for external library types that are provably wrong. |
-| `interface` | Reserved for component prop definitions only. |
-| `type` | Used for everything else: object shapes, API responses, store state, unions, intersections. |
+| `interface` | Forbidden. Use `type` for everything — props, object shapes, API responses, store state, unions, intersections. |
 | Inference | Let TypeScript infer where the type is obvious. No redundant annotations. |
 
 ---
@@ -110,4 +109,4 @@ Component layer
 | User can retry or dismiss and continue | Toast |
 | Error is specific to a field or input | Inline |
 
-This hierarchy connects directly to the UI contracts in `.claude/when/ui-library.md`.
+This hierarchy connects directly to the UI contracts in `docs/when/ui-library.md`.

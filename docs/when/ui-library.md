@@ -14,7 +14,7 @@ shadcn/ui is the component foundation for all UI work. It is Radix UI under the 
 
 - Take the shadcn component as-is for structure and behaviour.
 - Restyle with Tailwind v4 utilities to match the project's design.
-- Add animations where required (see `.claude/when/patterns.md`).
+- Add animations where required (see `docs/when/patterns.md`).
 - Never rewrite the underlying Radix primitive logic — you lose accessibility for free.
 
 ```tsx
@@ -123,7 +123,7 @@ if (!items.length) {
 
 ## Error states
 
-Error states close the loop with the error hierarchy defined in `.claude/when/data-and-validation.md`.
+Error states close the loop with the error hierarchy defined in `docs/when/data-and-validation.md`.
 
 | Error type | Pattern | Notes |
 |---|---|---|

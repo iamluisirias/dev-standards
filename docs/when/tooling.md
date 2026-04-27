@@ -1,7 +1,7 @@
 # Tooling
 
 > Read when: adding environment variables, configuring Biome, or writing tests.
-> For pnpm project setup, Husky, lint-staged, or commitlint setup, see `.claude/setup/git-hooks.md`.
+> For pnpm project setup, Husky, lint-staged, or commitlint setup, see `docs/setup/git-hooks.md`.
 
 ---
 

@@ -1,6 +1,26 @@
 # Preamble
 
-> Read this before every task. This is the minimum context required to not break the codebase. For deeper rules on any topic, fetch the relevant doc from `.claude/when/`.
+> Read this before every task, no exceptions. Contains the minimum rules that apply to every file you touch, plus the routing table for task-specific docs.
+
+---
+
+## Before starting — fetch the relevant doc
+
+After reading this file, fetch every doc that applies to your task. Multiple docs may apply.
+
+| You are about to… | Fetch |
+|---|---|
+| Create or modify a feature, add a service, query, store, or decide where a file belongs | `docs/when/architecture.md` |
+| Build or modify a component, make component structure decisions | `docs/when/component-design.md` |
+| Work with TypeScript types, Valibot schemas, forms, API data, or error handling | `docs/when/data-and-validation.md` |
+| Create or modify a route, nested routes, loaders, or search params | `docs/when/routing.md` |
+| Add env variables, configure Biome, or write tests | `docs/when/tooling.md` |
+| Implement component logic, make state decisions, add animations, or reach for `useEffect` | `docs/when/patterns.md` |
+| Build UI, add interactive elements, implement loading/empty/error states, use modals or dialogs | `docs/when/ui-library.md` |
+| Write functions, hooks, or components; define API types; review code structure | `docs/when/code-quality.md` |
+| Introduce a pattern not seen elsewhere in the codebase | `docs/never/no-go-list.md` |
+| Set up pnpm, Husky, lint-staged, or commitlint | `docs/setup/git-hooks.md` |
+| Create or configure a GitHub repo, CI workflow, or PR template | `docs/setup/github-and-ci.md` |
 
 ---
 
@@ -53,11 +73,11 @@ Route files follow TanStack Router conventions — no type suffix: `index.tsx`, 
 |---|---|---|
 | Component function | `PascalCase` | `UserProfileCard` |
 | Hook function | `camelCase`, `use` prefix mandatory | `useAuthUser` |
-| TypeScript type / interface | `PascalCase` | `VehicleResponse` |
+| TypeScript type | `PascalCase` | `VehicleResponse` |
 | Constant variable | `SCREAMING_SNAKE_CASE` | `STEP_CODES` |
 | All other variables and functions | `camelCase` | `getVehicleData` |
 | Feature folder | `kebab-case` | `seguro-vehiculo` |
-| Route file / folder | `kebab-case`, mirrors URL | `$slug-product-category/` |
+| Route file / folder | `camelCase`, mirrors URL | `$slugProductCategory/` |
 
 ---
 
@@ -87,17 +107,16 @@ The file path is the contract. If a file moves, the import breaks loudly — tha
 
 | Rule | Detail |
 |---|---|
-| `any` | Forbidden as a variable, prop, or return type. Only permitted as a bound in a generic: `<T extends Record<string, any>>`. If you need it elsewhere, escalate to a human. |
+| `any` | Forbidden as a variable, prop, or return type. Only permitted as a bound in a generic: `<T extends Record<string, any>>`. Escalate to a human if needed elsewhere. |
 | `as` casting | Forbidden except for broken external library types where the library's types are provably wrong. |
-| `interface` | Reserved for component prop definitions only. |
-| `type` | Used for everything else: object shapes, API responses, store state, unions, intersections. |
+| `interface` | Forbidden. Use `type` for everything — props, object shapes, API responses, store state, unions, intersections. |
 | Inference | Let TypeScript infer where the type is obvious. No redundant annotations. |
 
 ---
 
 ## Package manager
 
-**pnpm is the only allowed package manager.** Never run `npm install`, `yarn add`, or any equivalent. Every install, add, remove, and script command uses `pnpm`.
+**pnpm is the only allowed package manager.** Never run `npm install`, `yarn add`, or any equivalent.
 
 ```bash
 # ✅ Correct
@@ -105,7 +124,7 @@ pnpm install
 pnpm add valibot
 pnpm add -D only-allow
 pnpm run build
-pnpm dlx tsx script.ts   # equivalent of npx
+pnpm dlx tsx script.ts
 
 # ❌ Wrong — blocked by preinstall hook
 npm install
@@ -115,9 +134,8 @@ npx tsx script.ts
 
 ---
 
-## When in doubt
+## Escalation
 
 - Can't express validation logic with `.check()`? → escalate to a human.
 - Need `any` outside a generic bound? → escalate to a human.
-- Not sure which doc applies? → check the index in `CLAUDE.md`.
-- About to introduce a pattern you haven't seen in this codebase? → read `.claude/never/no-go-list.md` first.
+- About to introduce a pattern not seen in this codebase? → fetch `docs/never/no-go-list.md` first.

@@ -22,7 +22,7 @@
 |---|---|
 | Use `any` as a variable, prop, or return type | Defeats type safety; escalate to a human instead |
 | Use `as` casting outside of broken external library types | Masks real type errors — fix the type, don't cast around it |
-| Use `interface` for non-prop types | `interface` is reserved for component props only |
+| Use `interface` for any type definition | `type` is the universal standard — `interface` is forbidden |
 | Use default exports | Breaks named import consistency and refactoring tooling |
 | Add redundant type annotations where TypeScript can infer | Noise that makes code harder to read |
 
