@@ -14,10 +14,18 @@ After reading this file, fetch every doc that applies to your task. Multiple doc
 | Build or modify a component, make component structure decisions | `docs/when/component-design.md` |
 | Work with TypeScript types, Valibot schemas, forms, API data, or error handling | `docs/when/data-and-validation.md` |
 | Create or modify a route, nested routes, loaders, or search params | `docs/when/routing.md` |
-| Add env variables, configure Biome, or write tests | `docs/when/tooling.md` |
-| Implement component logic, make state decisions, add animations, or reach for `useEffect` | `docs/when/patterns.md` |
-| Build UI, add interactive elements, implement loading/empty/error states, use modals or dialogs | `docs/when/ui-library.md` |
+| Add or modify env variables, configure Biome | `docs/when/env-and-config.md` |
+| Write or modify tests | `docs/when/testing.md` |
+| Implement component logic, make state decisions, or reach for `useEffect` | `docs/when/patterns.md` |
+| Add animations, transitions, or scroll-driven effects | `docs/when/animations.md` |
+| Build UI, add interactive elements, implement loading/empty/error states | `docs/when/ui-library.md` |
 | Write functions, hooks, or components; define API types; review code structure | `docs/when/code-quality.md` |
+| Manage client state beyond `useState`, or work with Zustand stores | `docs/when/state-management.md` |
+| Make HTTP calls, configure Axios, handle interceptors or API errors | `docs/when/api-layer.md` |
+| Work with keyboard navigation, ARIA, or focus | `docs/when/accessibility.md` |
+| Work with reCAPTCHA, Analytics, Hotjar, or any third-party integration | `docs/when/integrations.md` |
+| Build or modify any form; integrate Maskito; handle server errors in forms | `docs/when/forms.md` |
+| Define component variants with CVA, compose classes with `cn()` | `docs/when/styling.md` |
 | Introduce a pattern not seen elsewhere in the codebase | `docs/never/no-go-list.md` |
 | Set up pnpm, Husky, lint-staged, or commitlint | `docs/setup/git-hooks.md` |
 | Create or configure a GitHub repo, CI workflow, or PR template | `docs/setup/github-and-ci.md` |
@@ -37,8 +45,9 @@ src/features/[feature-name]/
   queries/       → TanStack Query queryOptions definitions
   schemas/       → Valibot validation schemas
   services/      → raw API call functions
-  stores/        → feature-scoped TanStack Store state
+  stores/        → feature-scoped Zustand state
   types/         → TypeScript types shared across the feature
+  utils/         → pure stateless helper functions
   tests/         → test files for this feature
 ```
 
@@ -61,6 +70,7 @@ kebab-case only. Pattern: `[descriptive-name].[type].ext`
 | `.lib` | `.ts` | `axios.lib.ts` |
 | `.type` | `.ts` | `vehicle.type.ts` |
 | `.constant` | `.ts` | `steps.constant.ts` |
+| `.util` | `.ts` | `maskito.util.ts` |
 | `.test` | `.ts` / `.tsx` | `vehicle.service.test.ts` |
 
 Route files follow TanStack Router conventions — no type suffix: `index.tsx`, `$slugProductCategory.tsx`.
@@ -84,15 +94,27 @@ Route files follow TanStack Router conventions — no type suffix: `index.tsx`, 
 ## Imports
 
 - **No barrel files.** `index.ts` re-exports are forbidden everywhere.
-- Import directly from the exact file using the `@/` alias (resolves to `src/`):
+- **`@/` alias is mandatory for all imports.** It resolves to `src/`. Relative paths (`../`, `./`) are forbidden everywhere — no exceptions.
+- **`@strategies` alias** resolves to `src/strategies/`. Use it only inside registry files when importing strategy files. Strategy files themselves use `@/`.
+- Import directly from the exact file:
 
 ```ts
+// Correct — always use @/ alias
 import { useQuoteStore } from "@/features/quotes/stores/quote.store";
 import { STEP_CODES } from "@/features/steps/constants/steps.constant";
 import { UserProfileCard } from "@/features/users/components/user-profile-card.component";
+import { cn } from "@/lib/cn.lib";
+import { env } from "@/config/env";
+
+// Correct — @strategies alias in registry files only
+import { seguroVehiculoProductCategoryStrategy } from "@strategies/product-categories/seguro-vehiculo.product-category.strategy";
+
+// Wrong — relative paths are forbidden
+import { useQuoteStore } from "../stores/quote.store";
+import { STEP_CODES } from "../../steps/constants/steps.constant";
 ```
 
-The file path is the contract. If a file moves, the import breaks loudly — that is correct behaviour.
+The file path is the contract. If a file moves, the import breaks loudly — that is correct behaviour. The `@/` alias ensures this happens regardless of how deeply nested the importing file is.
 
 ---
 
@@ -114,19 +136,46 @@ The file path is the contract. If a file moves, the import breaks loudly — tha
 
 ---
 
+## Stack at a glance
+
+| Layer | Tool |
+|---|---|
+| Framework | React 18 + TypeScript (strict) |
+| Build | Vite |
+| Package manager | pnpm — only allowed package manager |
+| Router | TanStack Router (file-based) |
+| Server state | TanStack Query |
+| Client state | Zustand |
+| Forms | React Hook Form + @hookform/resolvers |
+| Validation | Valibot |
+| HTTP | Axios |
+| UI base | shadcn/ui (Radix Nova) |
+| Icons | Lucide React |
+| Styling | Tailwind CSS v4 + CVA + tailwind-merge + clsx |
+| Animations | Motion (simple) / GSAP (complex) |
+| Input masking | Maskito |
+| Date utilities | date-fns |
+| Lint + format | Biome |
+| Carousel | Embla Carousel |
+| Scaffolding | Internal CLI |
+
+Full stack rules and decisions in `docs/when/` docs. The table above is orientation only.
+
+---
+
 ## Package manager
 
 **pnpm is the only allowed package manager.** Never run `npm install`, `yarn add`, or any equivalent.
 
 ```bash
-# ✅ Correct
+# Correct
 pnpm install
 pnpm add valibot
 pnpm add -D only-allow
 pnpm run build
 pnpm dlx tsx script.ts
 
-# ❌ Wrong — blocked by preinstall hook
+# Wrong — blocked by preinstall hook
 npm install
 yarn add valibot
 npx tsx script.ts

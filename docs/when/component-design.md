@@ -60,6 +60,8 @@ A component must use the Compound pattern when it has **more than one independen
 
 Compound sub-components share state via **React Context**, scoped to the component file and never exported. Never pass shared state as props through multiple layers.
 
+Context lives in the **same file** as the component that creates it — always. There is no `context/` folder at the feature level or anywhere else. A context that has grown large enough to feel like it needs its own file is a signal that the component should be split or the state moved to a Zustand store.
+
 ---
 
 ## Styling (Tailwind v4)

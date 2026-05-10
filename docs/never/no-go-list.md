@@ -8,7 +8,6 @@
 
 | Do not | Why |
 |---|---|
-| Create `index.ts` barrel files | Breaks tree-shaking, risks circular deps, adds maintenance overhead with no benefit |
 | Create a root-level `src/stores/` folder | Cross-feature state lives in the owning feature's `stores/` |
 | Write TanStack Router route definitions by hand | The file tree generates them — hand-written definitions drift and conflict |
 | Edit `src/routeTree.gen.ts` | Auto-generated — any manual edit will be overwritten on next dev server start |
@@ -28,13 +27,22 @@
 
 ---
 
+## Imports
+
+| Do not | Why |
+|---|---|
+| Use relative paths (`../`, `./`) for imports | `@/` alias is mandatory — relative paths break when files move and obscure the true path |
+| Create `index.ts` barrel files | Breaks tree-shaking, risks circular deps, adds maintenance overhead with no benefit |
+| Import an entire module when only a named export is needed | Import only what is used |
+
+---
+
 ## Validation
 
 | Do not | Why |
 |---|---|
 | Use Zod or Yup | Valibot is the only validation library |
 | Use `.refine()` in Valibot schemas | Bypasses type inference and creates runtime overhead; use `.check()` |
-| Write validation error messages as freeform prose | Must be namespaced keys for future i18next migration |
 | Write a `type` for an API response without a Valibot schema | Schema-first is required — type is derived, never written manually |
 
 ---
@@ -68,8 +76,14 @@
 
 | Do not | Why |
 |---|---|
-| Use React Hook Form for new features | TanStack Form is the current standard |
-| Migrate existing React Hook Form forms without an explicit task scope | Unscoped migrations create unfinished work |
+| Wire form validation manually instead of using `valibotResolver` | The resolver keeps the schema and form state in sync automatically |
+| Render a bare `<form>` tag without the shadcn `<Form />` wrapper | `<Form />` is required for all forms — no exceptions |
+| Use `register` or `Controller` directly inside a `<Form />` | Use `<FormField>` — it wraps `Controller` and wires errors and accessibility automatically |
+| Use `useState` to track field values | RHF owns form state — `useState` creates a second source of truth |
+| Use `useEffect` to sync form values to external state | Use `watch()` or `useWatch()` instead |
+| Define the Valibot schema inline in the component file | Schema lives in `schemas/[name]-form.schema.ts` |
+| Show server field errors in a toast | Field errors belong inline below the field via `form.setError()` |
+| Use `register` for Maskito-masked inputs | Masked inputs require `Controller` for correct value transformation |
 
 ---
 
@@ -77,7 +91,6 @@
 
 | Do not | Why |
 |---|---|
-| Use Zustand in new features | TanStack Store is the current standard |
 | Migrate existing Zustand stores without an explicit task scope | Unscoped migrations create unfinished work |
 | Store server state in `useState` | TanStack Query is the single source of truth for all async data |
 
@@ -102,4 +115,85 @@
 | Write commit messages in past tense (`added`, `fixed`) | Conventional Commits requires imperative mood (`add`, `fix`) |
 | Omit the scope | Scope is required — `feat: add thing` is rejected by commitlint |
 | Bypass Husky with `--no-verify` in normal workflow | Hooks exist to enforce standards; bypass only in documented emergencies |
-| Commit directly to `main` or `develop` | All changes arrive via PR |
+| Commit directly to `main`, `staging`, or `dev` | All changes arrive via PR |
+| Merge feature branches directly into `staging` | `staging` only receives merges from `dev` |
+
+---
+
+## State management
+
+| Do not | Why |
+|---|---|
+| Subscribe to the entire Zustand store without a selector | Re-renders on every state change regardless of what the component uses |
+| Store server state in Zustand | TanStack Query is the single source of truth for all async data |
+| Store derived values in state | Compute during render — do not store what can be calculated |
+| Define actions outside the store creator | Actions belong inside `create()` — not as external functions |
+| Use `persist` middleware for tokens or sensitive data | Persisted storage is accessible to XSS — never persist secrets |
+
+---
+
+## Authentication
+
+| Do not | Why |
+|---|---|
+| Store tokens in `localStorage` or `sessionStorage` | Accessible to XSS — use memory store for access tokens, httpOnly cookie for refresh tokens |
+| Log or expose tokens in console, errors, or responses | Tokens are secrets — treat them as such |
+| Handle 401s in individual queries | The Axios interceptor owns 401 handling globally |
+| Reveal whether a user account exists in error messages | Prevents user enumeration attacks |
+| Implement auth checks only client-side | Server-side validation is always required |
+
+---
+
+## Animations
+
+| Do not | Why |
+|---|---|
+| Use `useEffect` to run GSAP animations | `useGSAP` from `@gsap/react` handles context and cleanup correctly |
+| Animate `width`, `height`, `top`, `left`, or `margin` | These trigger layout recalculation every frame — animate `transform` and `opacity` |
+| Define Motion variants inline in JSX | New object reference on every render — define outside the component |
+| Use class selectors in GSAP without a scope ref | Selectors match globally — always scope to a container ref |
+
+---
+
+## API layer
+
+| Do not | Why |
+|---|---|
+| Call `axios.get()` or `axios.post()` directly | Always use a named instance from `lib/` |
+| Add interceptors inside a component or hook | Interceptors belong with the instance configuration |
+| Put `try/catch` inside a service function | Let errors propagate to TanStack Query |
+| Return `AxiosResponse<unknown>` from a service | Parse and type the response before returning |
+| Import TanStack Query inside a `services/` file | Services are pure async functions with no query awareness |
+
+---
+
+## Integrations
+
+| Do not | Why |
+|---|---|
+| Call `grecaptcha`, `gtag`, or `hj` directly | Always use the project wrappers — `trackEvent()`, the reCAPTCHA hook |
+| Send PII in Analytics event parameters | Privacy violation — use anonymised identifiers only |
+| Validate reCAPTCHA tokens client-side | Token validation is always server-side |
+| Add analytics or tracking SDKs without team approval | Increases bundle size, privacy surface, and compliance scope |
+
+---
+
+## Styling
+
+| Do not | Why |
+|---|---|
+| Use arbitrary Tailwind values (`w-[372px]`) without a documented reason | Breaks design scale consistency |
+| Use string concatenation for conditional classes | Use `cn()` from `@/lib/cn.lib` — it handles conflicts via tailwind-merge |
+| Call `clsx` or `twMerge` directly in components | Always use the `cn()` helper |
+| Use inline `style` for layout values | Use Tailwind utilities — inline style only for truly dynamic values |
+| Create `tailwind.config.js` | Tailwind v4 uses CSS-based configuration — config file is not used |
+
+
+---
+
+## Internal tooling
+
+| Do not | Why |
+|---|---|
+| Create feature folders and files manually when the CLI can scaffold them | `pnpm scaffold feature <name>` generates the correct structure automatically |
+| Deviate from the scaffolded file structure without a documented reason | Consistency enables tooling and onboarding |

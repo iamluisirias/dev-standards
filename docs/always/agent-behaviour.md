@@ -24,13 +24,13 @@ Before finishing, ask: does every change in this diff directly serve the task? I
 
 ## Handling existing code that violates the rules
 
-The codebase may contain patterns that conflict with this notebook — barrel files, `useEffect` misuses, Zustand stores, React Hook Form. This is normal in an evolving codebase.
+The codebase may contain patterns that conflict with these docs — `useEffect` misuses, relative imports, or bare `<form>` tags without the shadcn `<Form />` wrapper. This is normal in an evolving codebase.
 
 **Fix only what the task requires. Leave everything else untouched.**
 
 - If a file you are editing contains an unrelated violation, leave it and note it in your output.
 - Do not opportunistically refactor, even if the fix is small and obvious.
-- Migrations (Zustand → TanStack Store, RHF → TanStack Form) are explicit tasks — never a side effect.
+- Library migrations of any kind are explicit tasks — never a side effect.
 
 ---
 
@@ -40,7 +40,7 @@ Stop and report to the human before proceeding if:
 
 - **The task has architectural consequences** — where a new type of shared state should live, whether a new feature warrants a new folder, how to model a data relationship not covered by existing patterns.
 - **Two interpretations would produce meaningfully different code.**
-- **The task conflicts with a rule in this notebook** — you are asked to create a barrel file, use React Hook Form, write a `useEffect` for data fetching. Do not comply silently. Surface the conflict.
+- **The task conflicts with a rule in these docs** — you are asked to use relative imports instead of `@/`, render a bare `<form>` without the shadcn `<Form />` wrapper, write a `useEffect` for data fetching, or use `register`/`Controller` directly inside a `<Form />`. Do not comply silently. Surface the conflict.
 - **You would need to modify files outside the feature** in a way the task description did not anticipate.
 
 When stopping, report:
@@ -48,7 +48,7 @@ When stopping, report:
 2. Why it requires human input.
 3. The options you see, with a recommendation if you have one.
 
-Do not report uncertainty to avoid making a decision. Use your judgment for things clearly covered by this notebook. Stop only when the gap is real.
+Do not report uncertainty to avoid making a decision. Use your judgment for things clearly covered by these docs. Stop only when the gap is real.
 
 ---
 
@@ -64,9 +64,17 @@ Every output must be clean before you finish:
 
 ---
 
+## Verifying external APIs
+
+When making any claim about APIs, events, or configuration of external tools (Claude Code hooks, TanStack Router, Valibot, etc.), **do not treat the local doc or your training knowledge as the source of truth**. Always verify against the official documentation before making claims.
+
+Specifically for Claude Code hooks: before asserting that a hook event is valid or invalid, check `https://code.claude.com/docs/en/hooks`. The local doc at `docs/setup/hooks.md` does not maintain a list of available events — that list lives only in the official documentation.
+
+---
+
 ## Documenting assumptions
 
-If completing the task requires a reasonable assumption not covered by the task description or this notebook, document it explicitly in your output — not as a code comment, but as a note to the human.
+If completing the task requires a reasonable assumption not covered by the task description or these docs, document it explicitly in your output — not as a code comment, but as a note to the human.
 
 ```
 Assumption: [what you assumed]

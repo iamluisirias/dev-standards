@@ -10,6 +10,36 @@
 
 ---
 
+## Router infrastructure — `src/features/tanstack-router/`
+
+All router-level infrastructure lives in the `tanstack-router` feature. This is the standard — do not scatter these concerns across other features or `src/`.
+
+```
+src/features/tanstack-router/
+  components/
+    base.component.tsx          → shared layout primitives (container, title, link) for error/not-found pages
+    error.component.tsx         → default error boundary — delegates to not-found on 404, shows generic UI otherwise
+    not-found.component.tsx     → 404 page with home link
+    pending.component.tsx       → full-page spinner shown while route data loads
+    router-devtools.component.tsx → TanStack Router DevTools, lazy-loaded, dev only
+  lib/
+    tanstack-router.lib.ts      → creates the router instance; wires defaultErrorComponent, defaultNotFoundComponent, defaultPendingComponent
+  types/
+    tanstack-router.type.ts     → AllRoutePaths — type-safe union of every route path
+  schemas/
+    tanstack-router.schema.ts   → baseSearchSchema — shared pagination/search params base
+```
+
+**Rules:**
+
+- The router instance is created once in `tanstack-router.lib.ts` — do not instantiate the router anywhere else.
+- `defaultErrorComponent`, `defaultNotFoundComponent`, and `defaultPendingComponent` are configured on the router instance in `tanstack-router.lib.ts` — not in `__root.tsx` or individual routes.
+- To customise a route's error or pending state, pass `errorComponent` / `pendingComponent` directly on that route's `createFileRoute()` call. Only do this when the route genuinely needs different behaviour from the default.
+- `router-devtools.component.tsx` is the only place DevTools are mounted. It uses `lazy()` so it is excluded from production bundles — do not add a second DevTools mount.
+- `base.component.tsx` exports the primitive layout pieces used by both `error` and `not-found`. If you need a new router-level page (e.g. maintenance, offline), reuse these primitives.
+
+---
+
 ## File vs folder — the structural rule
 
 **Flat files for standalone (leaf) routes. Folders for grouped or nested routes.**

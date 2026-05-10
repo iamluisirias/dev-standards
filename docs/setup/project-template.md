@@ -1,113 +1,51 @@
-# Project CLAUDE.md Template
+# Project CLAUDE.md — Setup Guide
 
-> Reference doc — use this as the starting point when creating a `CLAUDE.md` for a new project repo.
+> Reference doc — read this when setting up a new project that consumes the base standards.
 
 ---
 
 ## Purpose
 
-Every project repo has its own `CLAUDE.md` at its root. That file does two things:
-1. Points to this notebook for all base rules.
-2. Defines only what diverges from or extends those base rules for this specific project.
+Each project that adopts these standards should have its own `CLAUDE.md` at its root.
+That file inherits the base rules and only documents what diverges or extends them.
 
-Project rules take precedence over the notebook where they conflict. Everything not mentioned in the project file inherits from the notebook unchanged.
+If a project has no deviations, it may still have a `CLAUDE.md` for project identity
+and commands — but it must not duplicate rules from `docs/`.
 
----
-
-## What a project file may override
-
-- Stack versions (e.g. a project on a different React or TanStack Router version).
-- Feature-specific naming exceptions with a documented reason.
-- Additional forbidden patterns specific to the project domain.
-- Extra lint rules activated in `biome.json` for this project.
-- Test coverage thresholds.
-- CI environment variables and deployment targets.
-
-## What a project file may never override
-
-These are invariants. No project exception is valid for these:
-
-- No barrel files (`index.ts` re-exports).
-- No `any` as variable, prop, or return type.
-- No default exports.
-- No `as` casting outside broken external library types.
-- pnpm is the only package manager.
-- Named exports only.
-- Conventional Commits with scope required.
-- Biome is the only linter and formatter.
+The ready-to-use template is at `template/CLAUDE.md` in this repo. Copy it to the
+project root and fill in the placeholders.
 
 ---
 
-## Template
+## What a project CLAUDE.md may define
 
-Copy this into the root `CLAUDE.md` of a new project and fill in the sections:
-
-```markdown
-# CLAUDE.md
-
-## Core standards
-
-All base rules live in the shared notebook at [link to notebook repo].
-Read `docs/always/preamble.md` and `docs/always/agent-behaviour.md` before every task.
-Use the doc map in the notebook's `CLAUDE.md` to find task-specific docs.
+- Stack and tooling choices (language, framework, libraries).
+- Project identity: name, purpose, audience, repo URL.
+- Essential commands (install, dev, test, lint, build).
+- Overrides — anything that legitimately diverges from the base docs, with a reason.
+- Local rules — project-specific conventions that extend (not contradict) the base.
+- Agent notes — gotchas, secret locations, non-obvious constraints.
 
 ---
 
-## Stack
+## What a project CLAUDE.md may never do
 
-| Tool            | Version | Notes                        |
-|-----------------|---------|------------------------------|
-| Node.js         |         |                              |
-| pnpm            |         |                              |
-| React           |         |                              |
-| TypeScript      |         |                              |
-| Vite            |         |                              |
-| TanStack Router |         |                              |
-| TanStack Query  |         |                              |
-| TanStack Form   |         |                              |
-| TanStack Store  |         |                              |
-| Biome           |         |                              |
-| Tailwind        |         |                              |
-| shadcn/ui       |         |                              |
+- Duplicate rules already in `docs/` — reference them, don't repeat them.
+- Override a base rule without marking it explicitly as an override and explaining why.
+- Grow beyond ~100 lines — if it's getting long, the content belongs in `docs/local/`.
 
 ---
 
-## Project-specific conventions
+## Local rule files
 
-<!-- Only document things that differ from or extend the notebook. -->
-<!-- If nothing differs, write "None — all rules inherit from the notebook." -->
+For rules too detailed for the `CLAUDE.md` itself, create a `docs/local/` folder in
+the project and reference those files from the `Local rules` section of `CLAUDE.md`.
 
-### Naming exceptions
-
-### Additional forbidden patterns
-
-### Feature structure notes
-
----
-
-## Environment
-
-| Variable | Purpose |
-|---|---|
-| `VITE_API_BASE_URL` | |
-| `VITE_APP_ENV` | |
-
----
-
-## Commands
-
-| Task | Command |
-|---|---|
-| Dev server | `pnpm dev` |
-| Build | `pnpm build` |
-| Typecheck | `pnpm exec tsc --noEmit` |
-| Lint + format | `pnpm exec biome check --write src/` |
-| Tests | `pnpm test` |
-| Tests with coverage | `pnpm test --coverage` |
+Example: `docs/local/routing.md` for nested route conventions specific to this project.
 
 ---
 
 ## Escalation
 
-If completing a task requires violating a rule in this file or in the notebook, stop and report to a human before proceeding.
-```
+If completing a task requires violating a rule in this file or in the base docs,
+the agent must stop and report to a human before proceeding.

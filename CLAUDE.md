@@ -10,7 +10,7 @@ Before writing any code, read the two mandatory docs in `docs/always/`. Then fet
 
 | Doc | What it covers |
 |---|---|
-| `docs/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager, task routing |
+| `docs/always/preamble.md` | File structure, naming, imports, exports, TypeScript invariants, package manager |
 | `docs/always/agent-behaviour.md` | Scope discipline, when to stop, output hygiene, how to document assumptions |
 
 ---
@@ -23,10 +23,18 @@ Before writing any code, read the two mandatory docs in `docs/always/`. Then fet
 | Building or modifying a component; making component structure decisions | `docs/when/component-design.md` |
 | TypeScript types, Valibot schemas, forms, API data, error handling | `docs/when/data-and-validation.md` |
 | Creating or modifying a route; nested routes; loaders; search params | `docs/when/routing.md` |
-| Env variables, Biome config, testing | `docs/when/tooling.md` |
-| Component logic, state decisions, animations, any time `useEffect` feels like the answer | `docs/when/patterns.md` |
-| Building UI, interactive elements, loading/empty/error states, modals, dialogs, tooltips | `docs/when/ui-library.md` |
-| Writing functions, hooks, or components; API types; reviewing code structure | `docs/when/code-quality.md` |
+| Env variables, Biome config | `docs/when/env-and-config.md` |
+| Writing or configuring tests | `docs/when/testing.md` |
+| Component logic, state decisions, any time `useEffect` feels like the answer | `docs/when/patterns.md` |
+| Animations — transitions, sequences, scroll effects | `docs/when/animations.md` |
+| Building UI, interactive elements, loading/empty/error states, modals, dialogs | `docs/when/ui-library.md` |
+| Writing functions, hooks, or components; reviewing code structure | `docs/when/code-quality.md` |
+| State that goes beyond `useState` — stores, server state, derived state | `docs/when/state-management.md` |
+| HTTP calls, Axios configuration, interceptors, error normalisation | `docs/when/api-layer.md` |
+| Accessibility — keyboard nav, ARIA, focus management | `docs/when/accessibility.md` |
+| reCAPTCHA, Analytics, Hotjar, or any third-party integration | `docs/when/integrations.md` |
+| Building or modifying any form, input masking, server error wiring | `docs/when/forms.md` |
+| Component variants, conditional classes, CVA, `cn()` | `docs/when/styling.md` |
 
 ---
 
@@ -45,6 +53,9 @@ Before writing any code, read the two mandatory docs in `docs/always/`. Then fet
 | `docs/setup/git-hooks.md` | pnpm setup, Husky, lint-staged, commitlint — full walkthrough |
 | `docs/setup/github-and-ci.md` | Branching strategy, PR template, CI workflow, repository settings |
 | `docs/setup/project-template.md` | Template and rules for a project-level CLAUDE.md |
+| `docs/setup/hooks.md` | Claude Code security hooks — PreToolUse blocks, audit logging, setup |
+| `docs/setup/subagents.md` | Subagent definitions, configuration reference, and usage patterns |
+| `docs/setup/mcps.md` | MCP servers — which are active, credentials, and how to add a new one |
 
 ---
 
@@ -53,30 +64,42 @@ Before writing any code, read the two mandatory docs in `docs/always/`. Then fet
 ```
 docs/
   always/
-    preamble.md
     agent-behaviour.md
-  when/
-    architecture.md
-    component-design.md
-    data-and-validation.md
-    routing.md
-    tooling.md
-    patterns.md
-    ui-library.md
-    code-quality.md
+    preamble.md
   never/
     no-go-list.md
   setup/
     git-hooks.md
     github-and-ci.md
+    hooks.md
     project-template.md
+    pull-request-template.md
+    subagents.md
+    mcps.md
+  when/
+    accessibility.md
+    animations.md
+    api-layer.md
+    architecture.md
+    code-quality.md
+    component-design.md
+    data-and-validation.md
+    env-and-config.md
+    forms.md
+    integrations.md
+    patterns.md
+    routing.md
+    state-management.md
+    styling.md
+    testing.md
+    ui-library.md
 ```
 
 ---
 
 ## Project-specific rules
 
-Each project has its own `CLAUDE.md` at its repo root. That file references this notebook for base rules and defines only what diverges or extends them. Project rules take precedence over this notebook where they conflict.
+Each project has its own `CLAUDE.md` at its repo root. That file references this `docs/` folder for base rules and defines only what diverges or extends them. Project rules take precedence over these docs where they conflict.
 
 See `docs/setup/project-template.md` for the format.
 

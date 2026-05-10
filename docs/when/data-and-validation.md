@@ -60,24 +60,26 @@ Valibot is the only validation library. Do not use Zod or Yup.
 
 - Use `.check()` for all custom validation logic. **Never use `.refine()`.**
   - Why: `.refine()` bypasses Valibot's type inference chain and creates runtime overhead. `.check()` is the type-safe equivalent. If `.check()` cannot express the logic, escalate to a human.
-- Write all validation error messages as **namespaced key identifiers**, not freeform prose. This makes the future migration to i18next mechanical.
+- Write validation error messages as clear, user-facing prose — they render directly in the UI.
 
 ```ts
-// ❌ Wrong — freeform prose, hard to migrate
-{ message: "This field is required" }
-
-// ✅ Correct — structured key, mechanical to migrate
+// ❌ Wrong — not user-facing
 { message: "validation.required.field" }
-{ message: "validation.vehicle.plate.invalid" }
+
+// ✅ Correct — readable prose
+{ message: "Este campo es requerido" }
+{ message: "Ingresa una placa válida" }
 ```
 
 ---
 
 ## Form management
 
-**TanStack Form** is the standard for all new features. Use it for all form logic and validation integration.
+**React Hook Form** with `@hookform/resolvers` is the standard. Use it for all form logic and validation integration.
 
-Do not use React Hook Form for new features. Do not migrate existing React Hook Form forms unless explicitly scoped to a migration task.
+Use `valibotResolver` from `@hookform/resolvers/valibot` to connect RHF with Valibot schemas — do not wire validation manually.
+
+For complete form conventions — file structure, `Controller` vs `register`, Maskito integration, server error wiring — see `docs/when/forms.md`.
 
 ---
 

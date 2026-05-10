@@ -8,13 +8,14 @@
 
 | Branch | Purpose |
 |---|---|
-| `main` | Production. Only receives merges from `develop` or emergency hotfixes. |
-| `develop` | Integration branch. All feature work targets here first. |
-| `feat/*` | New features. Branched from `develop`. |
-| `fix/*` | Bug fixes. Branched from `develop`. |
-| `hotfix/*` | Critical production fixes. Branched from `main`, merged to both `main` and `develop`. |
-| `chore/*` | Tooling, dependencies, config. Branched from `develop`. |
-| `refactor/*` | Code restructuring. Branched from `develop`. |
+| `main` | Production. Only receives merges from `staging` or emergency hotfixes. |
+| `staging` | Pre-production. Receives merges from `dev` for QA and validation before promotion to `main`. |
+| `dev` | Integration branch. All feature work targets here first. |
+| `feat/*` | New features. Branched from `dev`. |
+| `fix/*` | Bug fixes. Branched from `dev`. |
+| `hotfix/*` | Critical production fixes. Branched from `main`, merged to both `main` and `dev`. |
+| `chore/*` | Tooling, dependencies, config. Branched from `dev`. |
+| `refactor/*` | Code restructuring. Branched from `dev`. |
 
 Branch names follow the same type vocabulary as Conventional Commits and must include the scope:
 
@@ -25,49 +26,22 @@ chore/update-tanstack-query-v5
 ```
 
 **Rules:**
-- Never commit directly to `main` or `develop`.
+- Never commit directly to `main`, `staging`, or `dev`.
 - Delete the feature branch after merge.
-- A `hotfix/*` branch must merge to both `main` and `develop` before deletion.
+- A `hotfix/*` branch must merge to both `main` and `dev` before deletion.
+- `staging` only receives merges from `dev` — never from feature branches directly.
 
 ---
 
 ## Pull request template
 
-Create `.github/PULL_REQUEST_TEMPLATE.md`:
+The full template lives at `docs/setup/pull-request-template.md`. Copy it to `.github/PULL_REQUEST_TEMPLATE.md` in each repository.
 
-```markdown
-## What does this PR do?
-
-<!-- One paragraph. What changed and why. -->
-
-## Type of change
-
-- [ ] feat — new feature
-- [ ] fix — bug fix
-- [ ] refactor — no behaviour change
-- [ ] style — formatting or naming only
-- [ ] test — tests only
-- [ ] docs — documentation only
-- [ ] chore — tooling, deps, config
-
-## How to test
-
-<!-- Actionable steps to verify this works. If not applicable, write "N/A" and explain why. -->
-
-## Checklist
-
-- [ ] Follows conventions in the core notebook
-- [ ] No commented-out code or debug statements
-- [ ] No `console.log` remaining
-- [ ] Loading, empty, and error states handled (if applicable)
-- [ ] Accessibility not regressed (keyboard nav, ARIA)
-- [ ] Commit messages follow Conventional Commits
-```
-
-**Rules for filling this template:**
-- "What does this PR do?" must be a real description, not a restatement of the branch name.
+**Rules for filling the template:**
+- "¿Qué hace este PR?" must be a real description — not a restatement of the branch name.
 - Every checklist item must be checked before the PR is opened.
-- "How to test" must contain actionable steps — "it works" is not a test description.
+- "Pasos para QA" must contain actionable steps — "it works" is not a test description.
+- Visual changes require before/after screenshots — skip the section only for non-UI changes.
 
 ---
 
@@ -82,53 +56,35 @@ on:
   pull_request:
     branches:
       - main
-      - develop
+      - staging
+      - dev
 
 jobs:
-  ci:
-    name: Lint, typecheck & build
+  quality:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: 20
+          ref: ${{ github.head_ref }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
         with:
-          version: 10
-          run_install: false
-
-      - name: Get pnpm store path
-        id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-pnpm-
+          node-version: '24.x'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Biome check
-        run: pnpm exec biome check --no-errors-on-unmatched src/
+      - name: Check formatting
+        run: pnpm format:check
 
-      - name: Typecheck
-        run: pnpm exec tsc --noEmit
-
-      - name: Build
-        run: pnpm run build
+      - name: Types check
+        run: pnpm build
 ```
 
-Typecheck and build are separate steps so a type error fails fast with a clean message before Vite attempts the bundle.
+Formatting and build are separate steps so a format violation fails fast before Vite attempts the bundle.
 
 ### Rules
 
@@ -143,7 +99,7 @@ Typecheck and build are separate steps so a type error fails fast with a clean m
 
 Configure these on every new repository:
 
-**Branch protection for `main` and `develop`:**
+**Branch protection for `main`, `staging`, and `dev`:**
 - Require a pull request before merging — enabled.
 - Require approvals — 1 minimum.
 - Require status checks to pass before merging — enabled. Select the `ci` job.

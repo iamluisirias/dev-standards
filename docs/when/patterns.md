@@ -147,7 +147,7 @@ Passing props through more than two component levels is a signal state is in the
 
 - Siblings need it → lift to nearest common parent.
 - Parts of a Compound Component need it → React Context scoped to that component file.
-- Distant features need it → move to the owning feature's TanStack Store.
+- Distant features need it → move to the owning feature's Zustand store.
 
 ---
 
@@ -191,61 +191,3 @@ return (
 
 Index as key is acceptable only for static lists that are never reordered and never have items added or removed.
 
----
-
-## Animations
-
-### GSAP vs Framer Motion
-
-| Use case | Tool |
-|---|---|
-| Simple transitions, layout animations, mount/unmount presence | Framer Motion |
-| Complex sequenced animations, scroll-driven effects, timeline control | GSAP |
-| SVG path animation, morphing, stagger sequences | GSAP |
-| Shared layout transitions between routes or components | Framer Motion |
-
-### GSAP in React — mandatory rules
-
-Always use `useGSAP` from `@gsap/react`. Never use `useEffect` to run GSAP animations.
-
-```tsx
-// ❌ Wrong
-useEffect(() => { gsap.to(".box", { x: 100 }); }, []);
-
-// ✅ Correct
-useGSAP(() => { gsap.to(boxRef.current, { x: 100 }); }, { scope: containerRef });
-```
-
-- Always pass a `scope` ref so selectors are scoped to the component.
-- Prefer `refs` over class selectors for targeting elements.
-- `useGSAP` handles context and cleanup automatically when used correctly.
-
-### Animate transform, not layout properties
-
-Animating `width`, `height`, `top`, `left`, or `margin` triggers layout recalculation every frame. Always animate `transform` and `opacity`.
-
-```tsx
-// ❌ Wrong — causes layout thrash
-gsap.to(el, { width: 200, top: 50 });
-
-// ✅ Correct — GPU composited
-gsap.to(el, { x: 50, scaleX: 1.5 });
-```
-
-### Framer Motion rules
-
-- Use the `layout` prop to animate layout changes — do not manually animate `width`, `height`, or position.
-- Wrap conditionally rendered components in `<AnimatePresence>` to animate mount/unmount.
-- Define variants outside the component — never inline animation objects in JSX.
-
-```tsx
-// ❌ Wrong — new object reference every render
-<motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 10 }} />
-
-// ✅ Correct
-const variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-<motion.div variants={variants} initial="hidden" animate="visible" />
-```

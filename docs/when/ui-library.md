@@ -4,9 +4,19 @@
 
 ---
 
-## shadcn/ui — the base for everything
+## Component selection hierarchy
 
-shadcn/ui is the component foundation for all UI work. It is Radix UI under the hood — every interactive primitive (Dialog, Select, Tooltip, Popover, Accordion, DropdownMenu, etc.) is already accessible, keyboard navigable, and portal-aware by default.
+Before writing any UI component, follow this order:
+
+1. **`shadcn/ui`** — check here first. shadcn components live in `src/components/ui/` and can be edited directly.
+2. **Radix UI primitives** — use only when shadcn does not provide the primitive. This is rare.
+3. **Built from scratch** — last resort, only for components with no analogue in any of the above.
+
+---
+
+## shadcn/ui
+
+shadcn/ui is the component foundation for cases not covered by the in-house library. It is Radix UI under the hood — every interactive primitive (Dialog, Select, Tooltip, Popover, Accordion, DropdownMenu, etc.) is already accessible, keyboard navigable, and portal-aware by default.
 
 **Before building any UI component from scratch, check if shadcn/ui already provides it. If it does, use it as the base.**
 
@@ -74,7 +84,7 @@ Every async operation must have a loading state. A UI with no loading feedback f
 
 | Context | Pattern |
 |---|---|
-| Full page or section data | Skeleton matching the shape of the loaded content |
+| Full page or section data | `useSuspenseQuery` + `<Suspense fallback={<Skeleton />}>` |
 | Button triggering an action | Disabled + spinner inside the button |
 | Inline data (a count, a label) | Subtle pulse skeleton inline |
 | Background refetch | No indicator unless it takes more than ~1s |
@@ -83,7 +93,34 @@ Every async operation must have a loading state. A UI with no loading feedback f
 - Skeleton shape must match content shape. A skeleton that looks nothing like the loaded content causes layout shift.
 - Never show a blank white area while data is loading.
 - Disable interactive elements during submission to prevent double-submission.
-- Use TanStack Query's `isLoading` and `isFetching` flags — never track loading state manually with `useState`.
+- Never track loading state manually with `useState` — use TanStack Query.
+
+### `useSuspenseQuery` + `<Suspense>` — preferred for component data
+
+Use `useSuspenseQuery` when a component's entire render depends on async data. The component suspends while loading — it only renders when data is ready, so `data` is always defined and `isLoading` does not exist on the return value.
+
+The loading state is handled by the nearest `<Suspense>` boundary via its `fallback` prop. Pair it with an Error Boundary to handle fetch failures.
+
+```tsx
+// The data-fetching component — renders only when data is ready
+function VehicleTypeSelector() {
+  const { data } = useSuspenseQuery(getVehicleTypesQueryOptions());
+  return <Combobox options={data.data} />;
+}
+
+// The parent wraps it in Suspense + ErrorBoundary
+<ErrorBoundary fallback={<ErrorFallback />}>
+  <Suspense fallback={<ComboboxSkeleton />}>
+    <VehicleTypeSelector />
+  </Suspense>
+</ErrorBoundary>
+```
+
+The fallback must be a skeleton that matches the shape of the loaded content — not a spinner, not nothing.
+
+### `useQuery` — for conditional or inline data
+
+Use `useQuery` (with `isLoading`) when only part of the UI depends on the data, or when you need to conditionally render based on loading state within the same component.
 
 ```tsx
 const { data, isLoading } = useQuery(getUserQueryOptions());
