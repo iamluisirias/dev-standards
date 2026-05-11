@@ -1,10 +1,7 @@
 # CLAUDE.md — [Project name]
 
-## Base standards
-
-All base rules live in `docs/`. Read `docs/always/preamble.md` and
-`docs/always/agent-behaviour.md` before every task. Use the doc map
-in the root `CLAUDE.md` to find task-specific docs.
+> Base rules are loaded automatically from the global `~/.claude/CLAUDE.md` (dev-standards repo).
+> This file contains only what makes this project different — no need to repeat base rules here.
 
 ---
 
@@ -46,9 +43,9 @@ in the root `CLAUDE.md` to find task-specific docs.
 
 ## Overrides
 
-<!-- Document anything that diverges from the base standards. -->
+<!-- Anything that legitimately diverges from the base standards. -->
+<!-- Mark each override explicitly and explain why. -->
 <!-- If nothing diverges, write: "None — follows the base standard." -->
-<!-- Example: "Uses fetch directly instead of an HTTP client — no interceptor layer." -->
 
 ---
 
@@ -71,5 +68,5 @@ in the root `CLAUDE.md` to find task-specific docs.
 
 ## Escalation
 
-If completing a task requires violating a rule in this file or in the
-base docs, stop and report to a human before proceeding.
+If completing a task requires violating a rule in this file or in the base docs,
+stop and report to a human before proceeding.
